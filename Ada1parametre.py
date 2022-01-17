@@ -6,7 +6,7 @@ from figures import figures
 
 
 
-#La fonction ada1 permet de calculer la conductivité homognisée (khom) avec Moulinec et Suquet adaptatif 1 parametre ou Eyre Milton adaptatif 1 paramètre
+#La fonction ada1 permet de calculer la conductivité homognisée (khom) avec Moulinec et Suquet adaptatif 1 parametre ou Eyre Milton adaptatif 1 paramètre ou les algoritmes MS et EM basiques
 #N0:nb pixels de l'image (carrée)
 #k1=conductivité matrice
 #k2=conductivité inclusion
@@ -18,12 +18,12 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
     
     CA,ACA,ER,ALPHA=[],[],[],[]
 
-    khom=k1*((k1+k2)-(k1-k2)*0.25)/((k1+k2)+(k1-k2)*0.25)   #khom
+    khom=k1*((k1+k2)-(k1-k2)*0.25)/((k1+k2)+(k1-k2)*0.25)   #khom si micro=0
     
     if Micro==0:
-        U=variables0(N0,k1,k2,khom)                             #initialisation de la microstructure
+        U=variables0(N0,k1,k2,khom)                             #initialisation de la microstructure basique
     if Micro==1:
-        U=variablesquad(N0,k1,k2)                               #initialisation de la microstructure
+        U=variablesquad(N0,k1,k2)                               #initialisation de la microstructure avec 4 inclusions
     
     N=U[0]
     ki=U[1]
