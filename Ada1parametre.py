@@ -3,13 +3,13 @@ from greenOperatorConductionNumba import initializeGreen,operate_field
 from simplemicrostructuretri import variables0
 from micro4inclusions import variablesquad
 from figures import figures
-
+from math import sqrt
 
 
 #La fonction ada1 permet de calculer la conductivité homognisée (khom) avec Moulinec et Suquet adaptatif 1 parametre ou Eyre Milton adaptatif 1 paramètre ou les algoritmes MS et EM basiques
 #N0:nb pixels de l'image (carrée)
 #k1=conductivité inclusion 1
-#k2=conductivité inclusion 2
+#k2=conductivité inclusion 2  (uniquement utile pour la microstructure 1 avec 4 inclusions)
 #K0 pour le choix du k0
 #Algo le choix de l'algo: 0 pour conditionnement MS  ou 1 pour EM
 #AME=1 pour les algoritmes améliorés, AME=0 pour les algoritmes basiques
@@ -20,10 +20,10 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
     
     CA,ACA,ER,ALPHA=[],[],[],[]
 
-    khom=k1*((k1+k2)-(k1-k2)*0.25)/((k1+k2)+(k1-k2)*0.25)   #khom si micro=0
+    ka=(1/6)*(sqrt(25*k1**2-14*k1+25)-5*k1+5)    #utile pour la microstructure simple, pour avoir khom=1
     
     if Micro==0:
-        U=variables0(N0,k1,k2,khom)                             #initialisation de la microstructure basique
+        U=variables0(N0,ka,k1,1)                             #initialisation de la microstructure basique
     if Micro==1:
         U=variablesquad(N0,k1,k2)                               #initialisation de la microstructure avec 4 inclusions
     
