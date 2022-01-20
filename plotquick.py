@@ -15,16 +15,26 @@ from math import sqrt
 
 p=256
 
-c1=100000
-c2=0.001
-it=700
+c1=1E-5
+c2=1E-5
+k1=c1
+k2=c2
+ka=(1/6)*(sqrt(25*k1**2-14*k1+25)-5*k1+5)
+kb=(1/6)*(sqrt(25*k2**2-14*k2+25)-5*k2+5)
+
+    
+it=400
 micro=1
 
 itplot1=0
 itplot2=100
 
-kms=0.5*(c1+c2)
-kem=sqrt(c1*c2)
+KA=max(c1,c2,ka,kb,1)
+KB=min(c1,c2,ka,kb,1)
+
+
+kms=0.5*(KA+KB)
+kem=sqrt(KA*KB)
 
 K=["MS kms","EM kem","EM khom","MSada1 khom","EMada1 khom"]
 

@@ -8,11 +8,13 @@ from figures import figures
 
 #La fonction ada1 permet de calculer la conductivité homognisée (khom) avec Moulinec et Suquet adaptatif 1 parametre ou Eyre Milton adaptatif 1 paramètre ou les algoritmes MS et EM basiques
 #N0:nb pixels de l'image (carrée)
-#k1=conductivité matrice
-#k2=conductivité inclusion
-#Prec est le nombre d'itération ou la precision sur l'erreur
+#k1=conductivité inclusion 1
+#k2=conductivité inclusion 2
 #K0 pour le choix du k0
 #Algo le choix de l'algo: 0 pour conditionnement MS  ou 1 pour EM
+#AME=1 pour les algoritmes améliorés, AME=0 pour les algoritmes basiques
+#Prec est le nombre d'itération ou la precision sur l'erreur
+
 
 def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
     
@@ -44,8 +46,6 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
     for j in range(d):                             #on itère sur les 2 directions
         
         it=0
-
-        relativeChange = 1
         
         Eps_field = np.zeros(tuple(N)+(d,))        #initialisation du champ de déformation
         E_field = np.zeros(tuple(N)+(d,))          #initialisation du champ qui contient le chargement
@@ -66,7 +66,7 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
         Erreur0=np.linalg.norm(X)                #Erreur en norme L2 de X (itération 0, pour normaliser)
         
         while it<Prec:                                     
-            print("it: ",it,"      RelativeChange: ",relativeChange)            
+            print("it: ",it)            
             
             aX= np.zeros(tuple(N)+(d,))
             for i in np.ndindex(tuple(N)):                                                            
@@ -143,11 +143,15 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
     deltaACA=(ACA[len(ACA)-1]-ACA[len(ACA)-2])/ACA[len(ACA)-2]
     print("deltaACA ",deltaACA)
     
-    if Algo==0:
+    if Algo==0 and AME==0:
+        legend="MS"
+    if Algo==1 and AME==0:
+        legend="EM"
+    if Algo==0 and AME==1:
         legend="MSada1"
-    else:
+    if Algo==1 and AME==1:
         legend="EMada1"
-    
+        
     figures(Eps_field[:,:,1], "e22 "+legend+"  k0="+str(K0)) 
     
     return CA,ACA,ER,krefCA[0][0],krefACA[0][0]
