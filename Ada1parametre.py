@@ -105,7 +105,7 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
             
             it+=1
             
-            if j==0:                          #on calcule les grandeurs d interet (CA, tACA) uniquement pour un cas de chargement (dans une direction) et on met les valeurs dans les listes dédiées
+            if j==0:                          #on calcule les grandeurs d interet (CA, tACA) uniquement pour un cas de chargement (dans une direction, j=0, E=[1,0]) et on met les valeurs dans les listes dédiées
                 CA11=np.zeros((d,))
                 for i in np.ndindex(tuple(N)):
                     CA11+=np.dot(ki[i],Eps_field[i])/(N[0]**d)
