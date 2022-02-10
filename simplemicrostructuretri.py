@@ -4,7 +4,7 @@ from figures import figures
 
 
 #fonction qui cree une microstructure carrée avec deux sphères concentriques plongées dans un domaine carré
-#N0=nombre de pixels du coté de l'image, k1=conductivité grande sphère (matrice), k2=conductivité petite sphère (inclusion), k3=conductivité du "complément"
+#N0=nombre de pixels du coté de l'image, k1=conductivité grande sphère (matrice), k2=conductivité petite sphère (inclusion), k3=conductivité du "complément" cad le milieu homogénéisé
 
 def variables0(N0, k1, k2, k3):
     

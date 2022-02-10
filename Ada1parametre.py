@@ -12,8 +12,8 @@ from math import sqrt
 #k2=conductivité inclusion 2  (uniquement utile pour la microstructure 1 avec 4 inclusions)
 #K0 pour le choix du k0
 #Algo le choix de l'algo: 0 pour conditionnement MS  ou 1 pour EM
-#AME=1 pour les algoritmes améliorés, AME=0 pour les algoritmes basiques
-#Prec est le nombre d'itération ou la precision sur l'erreur
+#AME=1 pour les algoritmes améliorés, AME=0 pour les algoritmes basiques, AME=2 ppur les algoritmes améliorés bis
+#Prec est le nombre d'itérations
 
 
 def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
@@ -81,7 +81,7 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
             Y=-Y+aX
             
             
-            if AME==1:                #amelioration calcul du alpha ou algo basiques
+            if AME==1:                #amelioration: calcul du alpha
                 E1=0
                 E2=0
                 
@@ -89,7 +89,17 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
                     E1+=(np.dot(X[i], Y[i]))
                     E2+=(np.dot(Y[i], Y[i]))
                 al=E1/E2
-            else:
+            
+            if AME==2:                #amelioration: calcul du alpha bis
+                E1=0
+                E2=0
+                
+                for i in np.ndindex(tuple(N)):                                                             
+                    E1+=(np.dot(X[i], np.dot(ki[i],X[i])))
+                    E2+=(np.dot(Y[i], Y[i]))
+                al=E1/(E2*K0)
+            
+            if AME==0:
                 al=1
                 
             
@@ -151,7 +161,11 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
         legend="MSada1"
     if Algo==1 and AME==1:
         legend="EMada1"
+    if Algo==0 and AME==2:
+        legend="MSada1bis"
+    if Algo==1 and AME==2:
+        legend="EMada1bis"
         
     figures(Eps_field[:,:,1], "e22 "+legend+"  k0="+str(K0)) 
     
-    return CA,ACA,ER,krefCA[0][0],krefACA[0][0]
+    return CA,ACA,ER,ALPHA,krefCA[0][0],krefACA[0][0]
