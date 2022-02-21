@@ -12,7 +12,7 @@ from math import sqrt
 #k2=conductivité inclusion 2  (uniquement utile pour la microstructure 1 avec 4 inclusions)
 #K0 pour le choix du k0
 #Algo le choix de l'algo: 0 pour conditionnement MS  ou 1 pour EM
-#AME=1 pour les algoritmes améliorés, AME=0 pour les algoritmes basiques, AME=2 ppur les algoritmes améliorés bis
+# AME=0 pour les algoritmes basiques,AME=1 pour les algoritmes améliorés, AME=2 ppur les algoritmes améliorés bis, 3 pour MS ada ter, AME=4 pour le GC (marche avec MS)
 #Prec est le nombre d'itérations
 
 
@@ -61,24 +61,32 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
             
         field,field_fourier,fft,ifft,tupleK,frequencies,filters,tupleFilters = initializeGreen(N,filter_level=filter_level)
         X=operate_field(X,field_fourier,fft,ifft,tupleK,N,frequencies,filter_level,filters,tupleFilters,k0)   #calcul de - la convolée de tau par gamma0
-        
+        if AME==4:
+            P=np.copy(X)
+            
 
         Erreur0=np.linalg.norm(X)                #Erreur en norme L2 de X (itération 0, pour normaliser)
         
         while it<Prec:                                     
             print("it: ",it)            
             
-            aX= np.zeros(tuple(N)+(d,))
-            for i in np.ndindex(tuple(N)):                                                            
-                aX[i]=np.dot(alpha[i], X[i])
-            
-            for i in np.ndindex(tuple(N)):
-                Y[i]=np.dot(ki[i]-k0, aX[i])
+            if AME==4:
+                for i in np.ndindex(tuple(N)):
+                    Y[i]=np.dot(ki[i]-k0, P[i])
+            else:
+                aX= np.zeros(tuple(N)+(d,))
+                for i in np.ndindex(tuple(N)):                                                            
+                    aX[i]=np.dot(alpha[i], X[i])
+                for i in np.ndindex(tuple(N)):
+                    Y[i]=np.dot(ki[i]-k0, aX[i])
             
             field,field_fourier,fft,ifft,tupleK,frequencies,filters,tupleFilters = initializeGreen(N,filter_level=filter_level)
             Y=operate_field(Y,field_fourier,fft,ifft,tupleK,N,frequencies,filter_level,filters,tupleFilters,k0)   
-
-            Y=-Y+aX
+            
+            if AME==4: 
+                Y=-Y+P
+            else:
+                Y=-Y+aX
             
             
             if AME==1:                #amelioration: calcul du alpha
@@ -99,19 +107,49 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
                     E2+=(np.dot(Y[i], Y[i]))
                 al=E1/(E2*K0)
             
+            if AME==3:                #amelioration: calcul du alpha bis
+                E1=0
+                E2=0    
+                for i in np.ndindex(tuple(N)):                                                             
+                    E1+=(np.dot(X[i],X[i]))
+                    E2+=(np.dot(X[i], np.dot(ki[i],X[i])))
+                al=K0*E1/E2
+            
+            if AME==4:                #amelioration: calcul du alpha GC
+                E1=0
+                E2=0
+                
+                for i in np.ndindex(tuple(N)):                                                             
+                    E1+=(np.dot(X[i], X[i]))
+                    E2+=(np.dot(P[i], Y[i]))
+                al=E1/E2
+                
             if AME==0:
                 al=1
                 
             
             print("ALPHA", al)
             ALPHA.append(al)
+            if AME==4:
+                Eps_field=Eps_field+al*P
+            else:
+                Eps_field=Eps_field+al*aX
             
-            Eps_field=Eps_field+al*aX
             
             Erreur=np.linalg.norm(X)/Erreur0
-            
+            if AME==4:   
+                prevX=np.copy(X)          #sauvegarde du Xn pour le GC
             X=X-al*Y
+            
+            if AME==4:                #amelioration: calcul du beta GC
+                E1=0
+                E2=0
                 
+                for i in np.ndindex(tuple(N)):                                                             
+                    E1+=(np.dot(X[i], X[i]))
+                    E2+=(np.dot(prevX[i], prevX[i]))
+                beta=E1/E2
+                P=X+beta*P
             
             it+=1
             
@@ -152,7 +190,7 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
     print("deltaCA ",deltaCA)
     deltaACA=(ACA[len(ACA)-1]-ACA[len(ACA)-2])/ACA[len(ACA)-2]
     print("deltaACA ",deltaACA)
-    
+    legend="??"
     if Algo==0 and AME==0:
         legend="MS"
     if Algo==1 and AME==0:
@@ -163,8 +201,10 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec):
         legend="EMada1"
     if Algo==0 and AME==2:
         legend="MSada1bis"
-    if Algo==1 and AME==2:
-        legend="EMada1bis"
+    if Algo==0 and AME==3:
+        legend="MSada1ter"
+    if Algo==0 and AME==4:
+        legend="MS GC"
         
     figures(Eps_field[:,:,1], "e22 "+legend+"  k0="+str(K0)) 
     
