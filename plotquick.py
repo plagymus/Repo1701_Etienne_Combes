@@ -14,15 +14,15 @@ import numpy as np
 
 
 
-p=64
+p=128
 
-k1=100
+k1=1e-5
 k2=1
 ka=(1/6)*(sqrt(25*k1**2-14*k1+25)-5*k1+5)
 kb=(1/6)*(sqrt(25*k2**2-14*k2+25)-5*k2+5)
 
     
-it=30
+it=2
 micro=0
 ini=0 #initialisation de Voigt ou Reuss
 
@@ -43,11 +43,12 @@ K=["MS kms V","EM kem V","EM khom V","EMada1 khom V","MSada1 khom V","MSada1bis 
 header1="MS kms, EM kem, EM khom, EMada1 khom, MSada1 khom, MSada1bis khom,MSada1ter khom, MS GC khom"
 header1="MS kms V, EM kem V, EM khom V, EMada1 khom V, MSada1 khom V, MSada1bis khom V, MSada1ter khom V, MS GC khom V, MS kms R, EM kem R, EM khom R, EMada1 khom R, MSada1 khom R, MSada1bis khom R, MSada1ter khom R, MS GC khom R, MS kms M, EM kem M, EM khom M, EMada1 khom M, MSada1 khom M, MSada1bis khom M, MSada1ter khom M, MS GC khom M"
 
-liste=[3,3+8,3+16] #algos que l'on souhaite faire tourner
+liste=[3,5] #algos que l'on souhaite faire tourner
+
 
 K=[K[i] for i in liste]
 header = ", ".join(K)
-
+print(header)
 legend=str(k1)+" "+str(k2)+" "+str(p)+" Comparaison"
 
 U0=[]
@@ -59,53 +60,53 @@ ALPHA=[]
 for i in liste:
     
     if i==0:
-        U=ada1(p,micro,k1,k2,kms,0,0,it,0)  #MS simple
+        U=ada1(p,micro,k1,k2,kms,0,0,it,0)  #MS simple V
     if i==1:
-        U=ada1(p,micro,k1,k2,kem,1,0,it,0)  #EM simple kem
+        U=ada1(p,micro,k1,k2,kem,1,0,it,0)  #EM simple kem V
     if i==2:
-        U=ada1(p,micro,k1,k2,1,1,0,it,0)  #EM simple khom
+        U=ada1(p,micro,k1,k2,1,1,0,it,0)  #EM simple khom V
     if i==3:
-        U=ada1(p,micro,k1,k2,1,1,1,it,0)    #EM ame 1 par
+        U=ada1(p,micro,k1,k2,1,1,1,it,0)    #EM ame 1 par V
     if i==4:
-        U=ada1(p,micro,k1,k2,1,0,1,it,0)    #MS ame 1 par 
+        U=ada1(p,micro,k1,k2,1,0,1,it,0)    #MS ame 1 par V 
     if i==5:
-        U=ada1(p,micro,k1,k2,1,0,2,it,0)    #MS ame 1 par bis
+        U=ada1(p,micro,k1,k2,1,0,2,it,0)    #MS ame 1 par bis V
     if i==6:
-        U=ada1(p,micro,k1,k2,1,0,3,it,0)    #MS ame 1 par ter
+        U=ada1(p,micro,k1,k2,1,0,3,it,0)    #MS ame 1 par ter V
     if i==7:
-        U=ada1(p,micro,k1,k2,1,0,4,it,0)    #MS GC
+        U=ada1(p,micro,k1,k2,1,0,4,it,0)    #MS GC V
     if i==8:
-        U=ada1(p,micro,k1,k2,kms,0,0,it,1)  #MS simple
+        U=ada1(p,micro,k1,k2,kms,0,0,it,1)  #MS simple R
     if i==9:
-        U=ada1(p,micro,k1,k2,kem,1,0,it,1)  #EM simple kem
+        U=ada1(p,micro,k1,k2,kem,1,0,it,1)  #EM simple kem R
     if i==10:
-        U=ada1(p,micro,k1,k2,1,1,0,it,1)  #EM simple khom
+        U=ada1(p,micro,k1,k2,1,1,0,it,1)  #EM simple khom R
     if i==11:
-        U=ada1(p,micro,k1,k2,1,1,1,it,1)    #EM ame 1 par
+        U=ada1(p,micro,k1,k2,1,1,1,it,1)    #EM ame 1 par R
     if i==12:
-        U=ada1(p,micro,k1,k2,1,0,1,it,1)    #MS ame 1 par 
+        U=ada1(p,micro,k1,k2,1,0,1,it,1)    #MS ame 1 par  R
     if i==13:
-        U=ada1(p,micro,k1,k2,1,0,2,it,1)    #MS ame 1 par bis
+        U=ada1(p,micro,k1,k2,1,0,2,it,1)    #MS ame 1 par bis R
     if i==14:
-        U=ada1(p,micro,k1,k2,1,0,3,it,1)    #MS ame 1 par ter
+        U=ada1(p,micro,k1,k2,1,0,3,it,1)    #MS ame 1 par ter R
     if i==15:
-        U=ada1(p,micro,k1,k2,1,0,4,it,1)    #MS GC
+        U=ada1(p,micro,k1,k2,1,0,4,it,1)    #MS GC R
     if i==16:
-        U=ada1(p,micro,k1,k2,kms,0,0,it,2)  #MS simple
+        U=ada1(p,micro,k1,k2,kms,0,0,it,2)  #MS simple M
     if i==17:
-        U=ada1(p,micro,k1,k2,kem,1,0,it,2)  #EM simple kem
+        U=ada1(p,micro,k1,k2,kem,1,0,it,2)  #EM simple kem M
     if i==18:
-        U=ada1(p,micro,k1,k2,1,1,0,it,2)  #EM simple khom
+        U=ada1(p,micro,k1,k2,1,1,0,it,2)  #EM simple khom M
     if i==19:
-        U=ada1(p,micro,k1,k2,1,1,1,it,2)    #EM ame 1 par
+        U=ada1(p,micro,k1,k2,1,1,1,it,2)    #EM ame 1 par M
     if i==20:
-        U=ada1(p,micro,k1,k2,1,0,1,it,2)    #MS ame 1 par 
+        U=ada1(p,micro,k1,k2,1,0,1,it,2)    #MS ame 1 par M 
     if i==21:
-        U=ada1(p,micro,k1,k2,1,0,2,it,2)    #MS ame 1 par bis
+        U=ada1(p,micro,k1,k2,1,0,2,it,2)    #MS ame 1 par bis M
     if i==22:
-        U=ada1(p,micro,k1,k2,1,0,3,it,2)    #MS ame 1 par ter
+        U=ada1(p,micro,k1,k2,1,0,3,it,2)    #MS ame 1 par ter M
     if i==23:
-        U=ada1(p,micro,k1,k2,1,0,4,it,2)    #MS GC
+        U=ada1(p,micro,k1,k2,1,0,4,it,2)    #MS GC M
 
     U0.append(U[0])
     U1.append(U[1])

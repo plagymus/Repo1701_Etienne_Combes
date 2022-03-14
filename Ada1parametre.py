@@ -11,10 +11,10 @@ from math import sqrt
 #k1=conductivité inclusion 1
 #k2=conductivité inclusion 2  (uniquement utile pour la microstructure 1 avec 4 inclusions)
 #K0 pour le choix du k0
-#Algo le choix de l'algo: 0 pour conditionnement MS  ou 1 pour EM
-# AME=0 pour les algoritmes basiques,AME=1 pour les algoritmes améliorés, AME=2 ppur les algoritmes améliorés bis, 3 pour MS ada ter, AME=4 pour le GC (marche avec MS)
+#Algo le choix du conditionnement: 0 pour conditionnement MS  ou 1 pour EM
+# AME=0 pour les algoritmes basiques,AME=1 pour les algoritmes améliorés, AME=2 MS ame bis, 3 pour MS ada ter, AME=4 pour le GC (marche avec conditionnement MS)
 #Prec est le nombre d'itérations
-#Ini=0 pour Voigt et 1 pour initialisation de Reuss
+#Ini=0 pour Voigt et 1 pour initialisation de Reuss 2 pour Moyenne
 
 def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec,Ini):
     
@@ -102,8 +102,8 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec,Ini):
         if AME==4:
             P=np.copy(X)
             
-
-        Erreur0=np.linalg.norm(X)                #Erreur en norme L2 de X (itération 0, pour normaliser)
+        if j==0:
+            ER.append(np.linalg.norm(X)/N0)               #Erreur en norme L2 de X (itération 0)
         
         while it<Prec:                                     
             print("it: ",it)            
@@ -145,7 +145,7 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec,Ini):
                     E2+=(np.dot(Y[i], Y[i]))
                 al=E1/(E2*K0)
             
-            if AME==3:                #amelioration: calcul du alpha bis
+            if AME==3:                #amelioration: calcul du alpha ter
                 E1=0
                 E2=0    
                 for i in np.ndindex(tuple(N)):                                                             
@@ -172,9 +172,8 @@ def ada1(N0,Micro,k1,k2,K0,Algo,AME,Prec,Ini):
                 Eps_field=Eps_field+al*P
             else:
                 Eps_field=Eps_field+al*aX
-            
-            
-            Erreur=np.linalg.norm(X)/Erreur0
+                       
+            Erreur=np.linalg.norm(X/N0)
             if AME==4:   
                 prevX=np.copy(X)          #sauvegarde du Xn pour le GC
             X=X-al*Y
